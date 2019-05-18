@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>注册Rango</h1>
+
+        <form id="user_form" method="post" action="/rango/register/"
+                enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <!-- 显示每个表单，as_p方法会将每个元素处理为段落。这样可确保每个元素显示为一个新行，看起来很整洁]-->
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
+
+            <!-- 提供一个可点击的按钮，用来提交表单. -->
+            <input type="submit" name="submit" value="注册" /><br />
+        </form>
+        {% if is_registered %}
+        <strong>非常感谢您的注册!</strong>
+        {% endif %}
+        <a href="/rango/">返回到首页.</a><br />
+    </body>
+</html>

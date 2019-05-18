@@ -1,5 +1,8 @@
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.contrib.auth.models import User#django自带的用户模型
+from django.conf import settings
+
 # Create your models here.
 # class Publisher(models.Model):
 #     #id = models.AutoField(primary_key=True)  # 这行代码可以省略
@@ -40,3 +43,20 @@ class Page(models.Model):
     # def __unicode__(self):
     def __str__(self):
         return self.title
+
+class UserProfile(models.Model):
+    #在django2.0后，定义外键和一对一关系的时候需要加on_delete选项，
+    # 此参数为了避免两个表里的数据不一致问题，不然会报错：
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    website = models.URLField(blank=True)
+
+    #BUG!
+    #如果不重写upload函数会存在一个bug在admin和存储图像的路径上
+    def upload_to(instance, fielname):
+        return '/'.join([settings.MEDIA_ROOT,fielname])
+
+    picture  = models.ImageField(upload_to='profile_images/', blank=True)
+    #记得更新数据库python manage.py makemigrations + python manage.py migrate
+
+    def __str__(self):
+        return self.user.username

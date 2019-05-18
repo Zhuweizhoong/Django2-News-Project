@@ -4,9 +4,13 @@ from django.http import HttpResponse
 
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from rango.models import Category
-from rango.models import Page
+from rango.models import Category,Page
 from rango.forms import CategoryForm,PageForm
+from rango.forms import UserForm,UserProfileForm
+
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponseRedirect, HttpResponse
+
 from django.views.decorators.csrf import csrf_protect
 
 # Create your views here.
@@ -32,7 +36,8 @@ def index(request):
 # We make use of the shortcut function to make our lives easier.
 # Note that the first parameter is the template we wish to use.
     #return render_to_response('rango/index.html', context_dict,context)
-    return render_to_response('rango/index.html', context_dict,context)
+    return render(request, 'rango/index.html', context_dict)
+    # return render_to_response('rango/index.html', context_dict,context)
 
 def about(request):
     context = RequestContext(request)
@@ -166,6 +171,90 @@ def add_page(request, category_name_slug):
         form = PageForm()
 
     return render(request, 'rango/add_page.html', {'form':form, 'category': cat})
+
+#用户注册视图
+def register(request):
+    is_registered = False
+
+    if request.method == 'POST':
+        user_form = UserForm(data = request.POST)
+        profile_form = UserProfileForm(data = request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            user.set_password(user.password)
+            user.save()
+
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            if 'picture' in request.FILES:
+                profile.picture = request.FILES['picture']
+            profile.save()
+
+            is_registered = True
+
+        else:
+            print('user_form:',user_form.erros,'profile_form:',profile_form.errors)
+    else:
+        user_form = UserForm
+        profile_form = UserProfileForm
+
+    # return render(request,
+    #               'rango/register.html',
+    #               {'user_form':user_form,'profile_form':profile_form,'register':is_registered})
+    return render(request,
+                  'rango/register.html',
+                  locals())
+
+#log in 系统
+def user_login(request):
+    if request.method == 'POST':
+        user_name = request.POST['username']
+        pass_word = request.POST['password']
+
+        user = authenticate(username = user_name,password = pass_word)
+
+        if user:
+            #check是否激活，可能被ban了
+            if user.is_active:
+                login(request,user)
+                return HttpResponseRedirect('/rango/')
+            else:
+                return HttpResponse('SORRY,YOU ACCOUNT IS BANNED')
+        else:
+            print("Invalid login details:{0},{1}".format(user_name,pass_word))
+            return HttpResponse("Invalid login detail supplied")
+
+    else:
+        return render(request,
+                      'rango/login.html')
+
+
+
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+
+# 使用login_required()装饰器来确保只有已登录的用户才可以访问这个视图
+@login_required
+def user_logout(request):
+    # 我们只能对已登录的用户使用注销功能
+    logout(request)
+
+    # 将用户重新引导回首页.
+    return HttpResponseRedirect('/rango/')
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

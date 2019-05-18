@@ -6,6 +6,8 @@
 
 from django import forms
 from rango.models import Page,Category
+from django.contrib.auth.models import User
+from rango.models import UserProfile
 from django.views.decorators.csrf import csrf_protect
 
 
@@ -50,3 +52,17 @@ class PageForm(forms.ModelForm):
         exclude = ('category',)
         #or specify the fields to include (i.e. not include the category field)
         # fields = ('title', 'url', 'views')
+
+#用户注册
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta:
+        model = User
+        fields = ('username','email','password')
+
+class UserProfileForm(forms.ModelForm):
+
+    class Meta:
+        model = UserProfile
+        fields = ('website','picture')
