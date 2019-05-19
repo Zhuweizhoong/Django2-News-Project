@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Rango - {% block title %}实战Django!{% endblock %}</title>
+        <title>Rango - {% block title %}JEREMIE RANGO{% endblock %}</title>
     </head>
 
     <body>
@@ -14,7 +14,6 @@
         <div>
             <ul>
             {% if user.is_authenticated %}
-                <li><a href="/rango/restricted/">限制页面</a></li>
                 <li><a href="/rango/logout/">注销</a></li>
                 <li><a href="/rango/add_category/">新建分类</a></li>
             {% else %}

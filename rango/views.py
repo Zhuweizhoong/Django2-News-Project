@@ -194,7 +194,7 @@ def register(request):
             is_registered = True
 
         else:
-            print('user_form:',user_form.erros,'profile_form:',profile_form.errors)
+            print(user_form.erros,profile_form.errors)
     else:
         user_form = UserForm
         profile_form = UserProfileForm
@@ -223,8 +223,7 @@ def user_login(request):
                 return HttpResponse('SORRY,YOU ACCOUNT IS BANNED')
         else:
             print("Invalid login details:{0},{1}".format(user_name,pass_word))
-            return HttpResponse("Invalid login detail supplied")
-
+            return HttpResponse("账号或者密码错误！！！")
     else:
         return render(request,
                       'rango/login.html')
@@ -243,7 +242,9 @@ def user_logout(request):
     # 将用户重新引导回首页.
     return HttpResponseRedirect('/rango/')
 
-
+# @login_required
+# def restricted(request):
+#     return HttpResponse('你需要先登入啦，亲~')
 
 
 

@@ -21,7 +21,7 @@
 
     <br>
         {% if user.is_authenticated %}
-            <h1> {{ user.username }}，欢迎来到Jeremie Rango!已登入</h1>
+            <h1> {{ user.username }}，欢迎来到Jeremie Rango!</h1>
         {% else %}
             <h1>欢迎来到Jeremie Rango!</h1>
         {% endif %}
@@ -52,11 +52,18 @@
         {% endif %}
 
         <a href="/rango/add_category/">创建一个新的Category</a><br/>
-        <a href="/rango/register/">求你注册一个吧！</a><br />
-        <a href="/rango/login/">你都注册了还不登录吗？</a><br />
-        <a href="/rango/about/">关于</a><br/>
+<!--        <a href="/rango/register/">求你注册一个吧！</a><br />-->
+<!--        <a href="/rango/login/">你都注册了还不登录吗？</a><br />-->
+
+<!--        {% if user.is_authenticated %}-->
+<!--        <a href="/rango/logout/">注销</a><br />-->
+<!--     {% endif %}-->
         {% if user.is_authenticated %}
         <a href="/rango/logout/">注销</a><br />
-     {% endif %}
+        {% else %}
+        <a href="/rango/login/">登录</a><br />
+        <a href="/rango/register/">注册</a><br />
+        {% endif %}
+        <a href="/rango/about/">关于</a><br/>
     </body>
 </html>
