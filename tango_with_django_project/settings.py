@@ -21,7 +21,7 @@ print('BASE_DIR:',BASE_DIR)
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '2f8@j!!-q(q@irl+3knz^p))2%izmc)^rz1$!c&hv4ly9s1ufs'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -148,6 +148,6 @@ MEDIA_ROOT   = os.path.join(BASE_DIR, "media")#这里不像static一样加中括
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.163.com"
 EMAIL_PORT = 994
-EMAIL_HOST_USER = "15018700011@163.com"   # 邮箱
-EMAIL_HOST_PASSWORD = "zwz110667"   # 邮箱授权码
+EMAIL_HOST_USER = ""   # 邮箱
+EMAIL_HOST_PASSWORD = ""   # 邮箱授权码
 EMAIL_USE_TLS= True
