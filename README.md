@@ -4,7 +4,6 @@
 类似的项目有《How to Tango with Django》，可惜电子书版本是django1.7的，网上也没有版本为django2的电子书，要上[官网](https://leanpub.com/tangowithdjango2)买很麻烦。这里我进行了版本的转换和代码的调整，代码的主体框架也是参考这本书的，在此之上额外添加功能。难度不大，适合新手去编写。
 
 ##环境
-
 - Python3.6
 - Django2.1
 - bootstrap3.3
