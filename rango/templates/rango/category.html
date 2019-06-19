@@ -1,34 +1,54 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'boot_base.html' %}
+
+{% load staticfiles %}
+
 {% block body_block %}
 
 <html>
-    <head>
-        <title>Rango</title>
-    </head>
+<div class="jumbotron p-4">
+	<div class="container">
+        {% if user.is_authenticated %}
+            <h1 class="jumbotron-heading text-center"> {{ user.username }}已登入，这里是Jeremie Rango!</h1>
+        {% else %}
+            <h1 class="jumbotron-heading text-center">游客你好！这里是Jeremie Rango!</h1>
+        {% endif %}
+        <strong>{{ boldmessage }}</strong>
+    </div>
+</div>
 
+<div class="container">
+	<div class="row">
+        <div class="col-md-6">
+        <div class="card mb-6">
+            <br class="card-body">
     <body>
         <h1>{{ category_name }}</h1>
         {% if category %}
             {% if pages %}
             <ul>
                 {% for page in pages %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                <h3><li><a href="{{ page.url }}">{{ page.title }}</a></li></h3>
                 {% endfor %}
             </ul>
             {% else %}
-                <strong>No pages currently in category.</strong>
+        <h3><div style="color:#FF0000"><strong >No pages currently in category.</strong></div></h3>
             {% endif %}
         {% else %}
             The specified category {{ category_name }} does not exist!
         {% endif %}
     </body>
+            </br></br></br>
+    <!--<a href="/rango/category/{{ category_name }}/add_page/">请添加一个pages吧</a>-->
+    <h2><a href="/rango/category/{{category.slug}}/add_page/">请添加一个pages吧</a><br/></h2>
+    </body>
+            </div>
+       	</div>
+        </div>
+     </div>
+   </div>
 </html>
 
-<!--<a href="/rango/category/{{ category_name }}/add_page/">请添加一个pages吧</a>-->
-<a href="/rango/category/{{category.slug}}/add_page/">请添加一个pages吧</a><br/>
-<a href="/rango/">BACK HOME</a><br/>
-</body>
-</html>
+
+
 
 {% endblock %}

@@ -1,12 +1,24 @@
-<!DOCTYPE html>
+{% extends 'boot_base.html' %}
+
+{% load staticfiles %}
+
+{% block body_block %}
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Rango - Add Page</title>
-</head>
+<div class="jumbotron p-4">
+	<div class="container">
+        {% if user.is_authenticated %}
+            <h1 class="jumbotron-heading text-center"> {{ user.username }}已登入，这里是Jeremie Rango!</h1>
+        {% else %}
+            <h1 class="jumbotron-heading text-center">游客你好！这里是Jeremie Rango!</h1>
+        {% endif %}
+        <strong>{{ boldmessage }}</strong>
+    </div>
+</div>
+
+	<div class="container">
 <body>
 {% if category %}
-    <h1>Add a Page to {{ category_name }}</h1>
+<h1><strong>Add a Page to {{ category_name }}</strong></h1>
     <form id="page_form" method="post" action="/rango/category/{{ category.slug }}/add_page/">
         {% csrf_token %}
         {% for hidden in form.hidden_fields %}
@@ -24,4 +36,6 @@
 {% endif %}
 <a href="/rango/">BACK HOME</a><br/>
 </body>
+    </div>
 </html>
+{% endblock %}

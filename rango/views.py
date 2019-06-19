@@ -7,36 +7,98 @@ from django.shortcuts import render_to_response
 from rango.models import Category,Page
 from rango.forms import CategoryForm,PageForm
 from rango.forms import UserForm,UserProfileForm
+from rango.forms import DIYLoginForm
 
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
-
+import datetime
+from captcha.fields import CaptchaField
 from django.views.decorators.csrf import csrf_protect
 
 # Create your views here.
 # def index(request):
 #     return HttpResponse('Rango Rest')
+
 def index(request):
 # Request the context of the request.
 # The context contains information such as the client's machine details, forexample.
-    context = RequestContext(request)
+#     context = RequestContext(request)
 # Construct a dictionary to pass to the template engine as its context.
 # Note the key boldmessage is the same as {{ boldmessage }} in the template!
-    #context_dict = {'boldmessage': "I am bold font from the context"}
+    # request.session.set_test_cookie()#测试浏览器的cookies是否正常
+
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
 
-    context_dict = {'categories':category_list,'pages':page_list}
+    context_dict = {'categories': category_list, 'pages': page_list}
 
-    for category in category_list:
-        category.url = category.name.replace(' ','_')
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 0
+    reset_last_visit_time = False
 
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+
+        last_visit_time = datetime.datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+        if (datetime.datetime.now() - last_visit_time).seconds > 0:
+            # ...访问数加1...
+            visits += 1
+            # ...发出更新last_visit值的信号
+            reset_last_visit_time = True
+    else:
+        print('last_visit is FALSE')
+        # last_visit值不存在,发出创建last_visit值的信号.
+        reset_last_visit_time = True
+
+    context_dict['visits'] = visits
+    request.session['visits'] = visits
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.datetime.now())
+
+    response = render(request, 'rango/index.html', context_dict)
+
+    return response
+
+
+    # for category in category_list:
+    #     category.url = category.name.replace(' ','_')
+
+# '''
+# 建立cookes会话==============================================
+# category_list = Category.objects.all()
+#     page_list = Page.objects.order_by('-views')[:5]
+#     context_dict = {'categories': category_list, 'pages': page_list}
+#
+#     visits = int(request.COOKIES.get('visits', '0'))
+#     reset_last_view_time = False
+#
+#     if 'last_visit' in request.COOKIES:
+#         print('last_visit in cookies')
+#         last_visit  = request.COOKIES['last_visit']
+#         last_visit_time  = datetime.datetime.strptime(last_visit[:-7],"%Y-%m-%d %H:%M:%S")
+#
+#         if (datetime.datetime.now() - last_visit_time).days> 0:
+#             visits += 1
+#             reset_last_view_time = True
+#     else:
+#         print('last_visit not in cookies')
+#         reset_last_view_time = True
+#         context_dict['views'] = visits
+#
+#     response = render(request,'rango/index.html',context_dict)
+#     if reset_last_view_time:
+#         print(datetime.datetime.now())
+#         response.set_cookie('last_vist',datetime.datetime.now())
+#     response.set_cookie('visits',visits)
+#     return response
+# '''====================================================================
 
 # Return a rendered response to send to the client.
 # We make use of the shortcut function to make our lives easier.
 # Note that the first parameter is the template we wish to use.
     #return render_to_response('rango/index.html', context_dict,context)
-    return render(request, 'rango/index.html', context_dict)
+    # return render(request, 'rango/index.html', context_dict)
     # return render_to_response('rango/index.html', context_dict,context)
 
 def about(request):
@@ -174,6 +236,12 @@ def add_page(request, category_name_slug):
 
 #用户注册视图
 def register(request):
+    # if request.session.test_cookie_worked():#测试浏览器的cookies是否正常
+    #     print(">>>> TEST COOKIE WORKED!")
+    #     request.session.delete_test_cookie()
+    # else:
+    #     print('NO cookie')
+
     is_registered = False
 
     if request.method == 'POST':
@@ -207,27 +275,42 @@ def register(request):
                   locals())
 
 #log in 系统
+#refusence:https://www.jianshu.com/p/b403fbd8fd1f
 def user_login(request):
     if request.method == 'POST':
-        user_name = request.POST['username']
-        pass_word = request.POST['password']
+        loginForm = DIYLoginForm(data=request.POST)
+        if loginForm.is_valid():
+            user_name = request.POST['username']
+            pass_word = request.POST['password']
 
-        user = authenticate(username = user_name,password = pass_word)
+            user = authenticate(username = user_name,password = pass_word)
 
-        if user:
-            #check是否激活，可能被ban了
-            if user.is_active:
-                login(request,user)
-                return HttpResponseRedirect('/rango/')
+            if user:
+                #check是否激活，可能被ban了
+                if user.is_active:
+                    login(request,user)
+                    print('sucess!')
+                    return HttpResponseRedirect('/rango/')
+                else:
+                    return HttpResponse('SORRY,YOU ACCOUNT IS BANNED')
             else:
-                return HttpResponse('SORRY,YOU ACCOUNT IS BANNED')
+                print("Invalid login details:{0},{1}".format(user_name,pass_word))
+                return HttpResponse("账号或者密码错误！！！")
         else:
-            print("Invalid login details:{0},{1}".format(user_name,pass_word))
-            return HttpResponse("账号或者密码错误！！！")
-    else:
-        return render(request,
-                      'rango/login.html')
+            return HttpResponseRedirect('/rango/login/')
 
+    else:
+        loginForm = DIYLoginForm
+        context = {}
+        context['loginForm'] = loginForm()
+        context['user'] = request.user
+        print('loginform else')
+        return render(request, 'rango/login.html', context)
+
+
+    # else:
+    #     return render(request,
+    #               'rango/login.html')
 
 
 from django.contrib.auth import logout
@@ -245,8 +328,6 @@ def user_logout(request):
 # @login_required
 # def restricted(request):
 #     return HttpResponse('你需要先登入啦，亲~')
-
-
 
 
 

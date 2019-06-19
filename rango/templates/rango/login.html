@@ -1,25 +1,38 @@
-{% block body_block %}
-<div class="hero-unit">
-    <h1>登录Jeremie Rango</h1>
+{% extends 'boot_base.html' %}
+{% load staticfiles %}
+{% block title %}登录{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
 
+{% block content %}
     <div class="container">
-    <form class="form-signin span4" id="login_form" method="post" action="/rango/login/">
-        <h2 class="form-signin-heading">请登录</h2>
-        {% csrf_token %}
-<!--        {% if bad_details %}-->
-<!--        <p><strong>您输入的用户名或密码错误!</strong></p>-->
-<!--        {% elif disabled_account %}-->
-<!--        <p><strong>您的Rango账户已被禁用，暂不能登录!</strong></p>-->
-<!--        {% endif %}-->
+        <div class="col-md-4 col-md-offset-4">
+          <br class='form-login' action="/rango/login/" method="post">
+              <h2 class="text-center">欢迎登录</h2>
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="id_username">用户名：</label>
+                <input type="text" name='username' class="form-control" id="id_username" placeholder="Username" autofocus required>
+              </div>
+              <div class="form-group">
+                <label for="id_password">密码：</label>
+                  <input type="password" name='password' class="form-control" id="id_password" placeholder="Password" required>
+              </div>
 
-        用户名: <input type="text" class="input-block-level" placeholder="用户名" name="username" value="" size="25" />
-        <br />
-        密码: <input type="password" class="input-block-level" placeholder="密码" name="password" value="" size="25" />
-        <br />
-        <button class="btn btn-primary" type="submit">登录</button>
-    </form>
+              <div>
 
-    </div>
-    <!-- /container -->
-</div>
+                  {{ loginForm.captcha }}
+                  {{ loginForm.errors.captcha }}
+              </div>
+</br>
+              <button type="reset" class="btn btn-default pull-left">清空</button>
+              <button type="submit" class="btn btn-primary pull-right">登入</button>
+          </br></br></br>
+      <div class="text-center">
+              <a href="/rango/register/">如果没有号，注册个吧！</a><br/>
+      </div>
+          </form>
+        </div>
+    </div> <!-- /container -->
 {% endblock %}

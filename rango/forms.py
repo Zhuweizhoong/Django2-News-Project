@@ -9,7 +9,8 @@ from rango.models import Page,Category
 from django.contrib.auth.models import User
 from rango.models import UserProfile
 from django.views.decorators.csrf import csrf_protect
-
+from captcha.fields import CaptchaField
+from django.contrib.auth.forms import AuthenticationForm
 
 class CategoryForm(forms.ModelForm):
     name = forms.CharField(max_length=64, help_text='Plz enter category name!')
@@ -56,13 +57,25 @@ class PageForm(forms.ModelForm):
 #用户注册
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
+    captcha = CaptchaField(error_messages={"invalid":"验证码错误"}) #加入这条
 
     class Meta:
         model = User
-        fields = ('username','email','password')
+        fields = ('username','password','email')
 
 class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
         fields = ('website','picture')
+
+class DIYLoginForm(AuthenticationForm):
+    captcha = CaptchaField(error_messages={"invalid": "验证码错误"})  # 加入这条
+
+
+# class EmailPostForm(forms.Form):
+#     name = forms.CharField(label='用户名', max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}))
+#     email = forms.EmailField(label='发送方邮件', widget=forms.EmailInput(attrs={'class': 'form-control'}))
+#     to = forms.EmailField(label='接收方邮件', widget=forms.EmailInput(attrs={'class': 'form-control'}))
+#     comments = forms.CharField(label='推荐语', required=False,
+#                                widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}))

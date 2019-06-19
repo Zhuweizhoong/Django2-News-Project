@@ -1,11 +1,23 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Rango</title>
-    </head>
+{% extends 'boot_base.html' %}
 
+{% load staticfiles %}
+
+{% block body_block %}
+<div class="jumbotron p-4">
+	<div class="container">
+        {% if user.is_authenticated %}
+            <h1 class="jumbotron-heading text-center"> {{ user.username }}已登入，这里是Jeremie Rango!</h1>
+        {% else %}
+            <h1 class="jumbotron-heading text-center">游客你好！这里是Jeremie Rango!</h1>
+        {% endif %}
+        <strong>{{ boldmessage }}</strong>
+    </div>
+</div>
+
+<html>
+	<div class="container">
     <body>
-        <h1>Add a Category</h1>
+    <h1><strong>Add a Category</strong></h1>
 
         <form id="category_form" method="post" action="/rango/add_category/">
 
@@ -24,4 +36,6 @@
         </form>
     </body>
     <a href="/rango/">BACK HOME</a><br/>
+    </div>
 </html>
+{% endblock %}

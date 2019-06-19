@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rango',
+    'registration',#registration进行用户校验
+    'captcha',#验证码
 ]
 
 MIDDLEWARE = [
@@ -141,3 +143,11 @@ STATICFILES_DIRS = [
 #absolute path to media dir
 MEDIA_URL = '/media/'
 MEDIA_ROOT   = os.path.join(BASE_DIR, "media")#这里不像static一样加中括号
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "smtp.163.com"
+EMAIL_PORT = 994
+EMAIL_HOST_USER = "15018700011@163.com"   # 邮箱
+EMAIL_HOST_PASSWORD = "zwz110667"   # 邮箱授权码
+EMAIL_USE_TLS= True
